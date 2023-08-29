@@ -1,18 +1,20 @@
 from langchain import HuggingFacePipeline, PromptTemplate, LLMChain
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, pipeline,AutoModelForCausalLM
 import torch
 from flask import Flask, render_template, request
 import re
 
+
 # choose model based on your hardware
-model = 'tiiuae/falcon-7b-instruct'
+model_id="tiiuae/falcon-7b-instruct"
 # model = 'tiiuae/falcon-40b-instruct'
 
 # load a tokenizer from a pretrained model using the Hugging Face AutoTokenizer class
 # and the from_pretrained method is used to retrieve the tokenizer associated with the specified model
 # to which the tokenizer is responsible for processing text inputs and converting them into numerical 
 # representations suitable for input to the model
-tokenizer = AutoTokenizer.from_pretrained(model)
+tokenizer=AutoTokenizer.from_pretrained(model_id)
+model=AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True)
 
 # the pipeline function returns a callable object that can be used to generate text using 
 # the specified model and parameters
@@ -20,10 +22,10 @@ pipeline = pipeline(
     'text-generation',  # the task for the pipeline
     model=model,  # the pretrained model to use
     tokenizer=tokenizer,  # the tokenizer for preprocessing inputs
-    torch_dtype=torch.bfloat16,  # the data type for torch tensors
+    torch_dtype=torch.float16,  # the data type for torch tensors
     trust_remote_code=True,  # flag to trust remote code (e.g., when using remote models)
     device_map='auto',  # the device to run the pipeline on (GPU or CPU)
-    max_length=20000,  # the maximum length of generated text
+    max_length=2000,  # the maximum length of generated text
     do_sample=True,  # flag indicating whether to use sampling for text generation
     top_k=10,  # the number of highest probability tokens to consider for sampling
     num_return_sequences=1,  # the number of sequences to generate
@@ -118,4 +120,4 @@ if __name__ == '__main__':
         print('CUDA is not being used.')
 
     # run app
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=3000, debug=False)

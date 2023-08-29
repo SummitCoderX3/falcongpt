@@ -4,3 +4,11 @@ accelerate
 langchain 
 bitsandbytes 
 flask
+
+chromadb==0.3.22
+langchain==0.0.191
+pdfminer.six==20221105
+InstructorEmbedding
+sentence-transformers
+docx2txt
+unstructured
